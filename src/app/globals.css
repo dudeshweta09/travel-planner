@@ -72,6 +72,26 @@
   }
   body {
     @apply bg-background text-foreground relative;
+    table {
+        font-family: sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #ccc;
+        margin: 25px;
+        background-color: #fff;
+        width: 100vh;
+        margin:auto;
+        margin-top: 10px;
+      }
+    
+      tr {
+        border-bottom: 1px solid #ccc;
+      }
+    
+      th,
+      td {
+        text-align: left;
+        padding: 8px 10px;
+      }
   }
 }
 

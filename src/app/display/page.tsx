@@ -2,12 +2,39 @@
 import React, { useEffect, useState } from "react";
 import { existTripDetails, TripDetails } from "@/components/addtrip";
 import { existTripMates, NameList } from "@/components/modal2";
-import { CalendarClockIcon } from "lucide-react";
+import { CalendarClockIcon, IndianRupeeIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { differenceInCalendarDays } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/modal";
+import EditBudget from "@/components/editbudget";
+import AddExpense from "@/components/addexpense";
+import Table from "@/components/tripitinerary";
+
+export interface Budget {
+  filter(arg0: (bg: Budget) => void): unknown;
+  push(newAmount: { amount: string }): unknown;
+  amount: string;
+}
+
+export interface Expense {
+
+  reduce(arg0: (prev: any, next: any) => any, arg1: number): any;
+  push(newExpense: {
+    category: string;
+    title: string;
+    amount: string;
+  }): unknown;
+  category: string;
+  title: string;
+  amount: string;
+}
+
+export const existingBudget: Budget =
+  JSON.parse(localStorage.getItem("Trav_Budget")!) || [];
+
+export const existingExpense: Expense =
+  JSON.parse(localStorage.getItem("Trav_Expense")!) || [];
 
 const DisplayPlanning = () => {
   const [cityName, setCityName] = useState("");
@@ -17,31 +44,68 @@ const DisplayPlanning = () => {
   const [date, setDate] = useState<DateRange | undefined>();
   const [mates, setMates] = useState("");
   const noOfDays = [...Array(days)];
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  let num = 1;
+  const [budget, setBudget] = useState("0");
+  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [balance, setBalance] = useState("");
+
+  useEffect(() => {
+    const totalExpense = existingExpense.reduce((prev: any, next: any) => {
+      return prev + parseFloat(next.amount);
+    }, 0);
+    const totalIncome = parseFloat(budget);
+    const balance = totalIncome - totalExpense;
+      setBalance(balance.toString());
+  }, [balance, budget]);
+
   useEffect(() => {
     if (date && date.from && date.to) {
       const dayCount = differenceInCalendarDays(date.to, date.from);
       setDays(dayCount);
-      for (let i = 1; i <= days; i++) {
-        noOfDays.push(num++);
-        console.log(noOfDays);
-      }
     }
-  });
+  }, [date]);
   useEffect(() => {
     const details = existTripDetails?.filter((td: TripDetails) => {
       setCityName(td.citiName);
       setCountryName(td.countrieName);
       setHotelName(td.hoteLName);
       setDate(td.date);
-
       const tripMates = existTripMates?.filter((tm: NameList) => {
         setMates(tm.title);
+      });
+      const getBudgetAmount = existingBudget?.filter((bg: Budget) => {
+        setBudget(bg.amount);
       });
     });
   }, []);
 
+  const updateBudget = () => {
+    const newAmount = {
+      amount: budget,
+    };
+    if (existingBudget == null) {
+      localStorage.setItem("Trav_Budget", JSON.stringify([newAmount]));
+    } else {
+      existingBudget.push(newAmount);
+      localStorage.setItem("Trav_Budget", JSON.stringify(existingBudget));
+    }
+  };
+
+  const updateExpense = () => {
+    const newExpense = {
+      category: category,
+      title: title,
+      amount: amount,
+    };
+
+    if (existingExpense == null) {
+      localStorage.setItem("Trav_Expense", JSON.stringify([newExpense]));
+    } else {
+      existingExpense.push(newExpense);
+      localStorage.setItem("Trav_Expense", JSON.stringify(existingExpense));
+    }
+  };
   return (
     <>
       <div className="h-screen pb-5 bg-stone-100">
@@ -66,45 +130,41 @@ const DisplayPlanning = () => {
             <h4 className="xl:text-4xl font-serif">
               <b>Budgeting</b>
             </h4>
-            {modalIsOpen && (
-              <Modal show={modalIsOpen} onClose={setModalIsOpen} />
-            )}
-            <Button
-              onClick={() => {
-                setModalIsOpen(true);
-              }}
-              className=" rounded-3xl bg-red-600 hover:bg-red-700"
-            >
-              Add Expenses
-            </Button>
+            <AddExpense
+              setCategory={setCategory}
+              title={title}
+              setTitle={setTitle}
+              amount={amount}
+              setAmount={setAmount}
+              onAddExpense={updateExpense}
+            />
           </div>
           <div className="mt-5 bg-slate-300 text-black rounded-md p-4">
-            <p className="text-md">
-              <b>budget:</b>
+            <p className="text-md flex justify-between">
+              <b className="flex">
+                budget: <IndianRupeeIcon />
+                {budget}
+              </b>
+              <b className="flex">
+                Balance: <IndianRupeeIcon />
+                {balance}
+              </b>
             </p>
             <div className="flex gap-3 mt-8 ">
-              <Button>Edit Budget</Button>
+              <EditBudget
+                budget={budget}
+                setBudget={setBudget}
+                setAmount={updateBudget}
+              />
               <Button>View Summary</Button>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 mx-3 mt-5">
-          {noOfDays.map(
-            (day, index) => (
-              console.log(day),
-              (
-                <div key={index} className=" rounded-lg h-56 bg-blue-300 my-4">
-                  <p className="text-white text-2xl text-center mt-3">
-                    DAY - {index}{" "}
-                  </p>
-                  <Input
-                    className=" w-3/4 mx-auto mt-2 xl:text-lg"
-                    placeholder="Make your Itinerary"
-                  />
-                </div>
-              )
-            )
-          )}
+        <div className="rounded-lg h-56 w-11/12 mx-auto bg-blue-300 my-4">
+          <h1 className="text-4xl underline italic font-mono text-center pt-3">
+            Itinerary List
+          </h1>
+          <Table />
         </div>
         <div></div>
       </div>
