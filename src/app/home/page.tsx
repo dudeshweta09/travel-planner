@@ -1,12 +1,15 @@
 "use client";
 import BgImage from "@/components/bgimage";
+import LoginForm from "@/components/login-form";
 import Modal from "@/components/modal";
+import SignUpForm from "@/components/signup-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React, { useState } from "react";
 
 const HomeMain = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalIsLoginOpen, setModalIsLoginOpen] = useState(false);
+  const [modalIsSignUpOpen, setModalIsSignUpOpen] = useState(false);
   return (
     <div className=" h-screen">
       <div className=" py-5 flex justify-between max-w-[140vh] mx-auto">
@@ -14,20 +17,25 @@ const HomeMain = () => {
             <img className="w-36" src="https://i.ibb.co/WsjkGpY/travel-planner-transparent.png"
              alt="travel-planner-transparent"/>
         </Link>
-        {modalIsOpen && <Modal show={modalIsOpen} onClose={setModalIsOpen} />}
+        {modalIsLoginOpen && <Modal show={modalIsLoginOpen} onClose={setModalIsLoginOpen}>
+          <LoginForm/>
+          </Modal>}
+          {modalIsSignUpOpen && <Modal show={modalIsSignUpOpen} onClose={setModalIsSignUpOpen}>
+          <SignUpForm />
+          </Modal>}
         <div className="flex gap-3 pt-14 pr-9">
         <Button
         className=" bg-amber-50 text-black border hover:bg-green-50"
           onClick={() => {
-            setModalIsOpen(true);
+            setModalIsLoginOpen(true);
           }}
         >
           Login
         </Button>
         <Button
-          onClick={() => {
-            setModalIsOpen(true);
-          }}
+        onClick={()=>{
+          setModalIsSignUpOpen(true);
+        }}
         >
           SignUp
         </Button>

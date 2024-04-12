@@ -8,14 +8,14 @@ const Header = () => {
     <header>
         <div className=" flex bg-stone-100">
           <div className=" pl-20 h-24 bg-stone-100 border-solid flex justify-start gap-8 w-4/5">
-            <Link href={"/home"}>
+            <Link href={""}>
               <img
                 className=" w-32 h-24"
                 src="https://i.ibb.co/WsjkGpY/travel-planner-transparent.png"
                 alt="travel-planner-transparent"
               />
             </Link>
-            <Link href={"/home"}>
+            <Link href={"/create"}>
               <HomeIcon className="text-center mt-4 w-10 size-10" />
               Home
             </Link>

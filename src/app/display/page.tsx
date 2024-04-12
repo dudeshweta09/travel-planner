@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { existTripDetails, TripDetails } from "@/components/addtrip";
-import { existTripMates, NameList } from "@/components/modal2";
+import { TripDetails } from "@/components/addtrip";
 import { CalendarClockIcon, IndianRupeeIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { differenceInCalendarDays } from "date-fns";
@@ -10,54 +9,38 @@ import { Button } from "@/components/ui/button";
 import EditBudget from "@/components/editbudget";
 import AddExpense from "@/components/addexpense";
 import Table from "@/components/tripitinerary";
-
-export interface Budget {
-  filter(arg0: (bg: Budget) => void): unknown;
-  push(newAmount: { amount: string }): unknown;
-  amount: string;
-}
-
-export interface Expense {
-
-  reduce(arg0: (prev: any, next: any) => any, arg1: number): any;
-  push(newExpense: {
-    category: string;
-    title: string;
-    amount: string;
-  }): unknown;
-  category: string;
-  title: string;
-  amount: string;
-}
-
-export const existingBudget: Budget =
-  JSON.parse(localStorage.getItem("Trav_Budget")!) || [];
-
-export const existingExpense: Expense =
-  JSON.parse(localStorage.getItem("Trav_Expense")!) || [];
+import { NameList } from "@/components/modal2";
+import Header from "@/components/header";
+import DbController from "../../../db-controller";
+import { useRouter } from "next/navigation";
+import { Expense, Budget } from "../../../schema";
+import ExpSummary from "@/components/exp-summary";
 
 const DisplayPlanning = () => {
+  const dbController = new DbController();
   const [cityName, setCityName] = useState("");
   const [countryName, setCountryName] = useState("");
   const [hotelName, setHotelName] = useState("");
   const [days, setDays] = useState(0);
   const [date, setDate] = useState<DateRange | undefined>();
-  const [mates, setMates] = useState("");
+  const [mates, setMates] = useState<NameList[]>([]);
   const noOfDays = [...Array(days)];
   const [budget, setBudget] = useState("0");
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState("");
-
+  const router = useRouter();
+  const expense:Array<Expense> = dbController.getCurrentExistingExpense()
   useEffect(() => {
-    const totalExpense = existingExpense.reduce((prev: any, next: any) => {
+    const currentExpense = dbController.getCurrentExistingExpense();
+    const totalExpense = currentExpense.reduce((prev: any, next: any) => {
       return prev + parseFloat(next.amount);
     }, 0);
     const totalIncome = parseFloat(budget);
     const balance = totalIncome - totalExpense;
       setBalance(balance.toString());
-  }, [balance, budget]);
+  }, [setBalance, dbController.existingExpense, dbController.existingBudget, balance]);
 
   useEffect(() => {
     if (date && date.from && date.to) {
@@ -66,15 +49,15 @@ const DisplayPlanning = () => {
     }
   }, [date]);
   useEffect(() => {
-    const details = existTripDetails?.filter((td: TripDetails) => {
+    const currentBudget = dbController.getCurrentExistingBudget()
+    const details = dbController.existingTripDetails?.filter((td: TripDetails) => {
       setCityName(td.citiName);
       setCountryName(td.countrieName);
       setHotelName(td.hoteLName);
       setDate(td.date);
-      const tripMates = existTripMates?.filter((tm: NameList) => {
-        setMates(tm.title);
-      });
-      const getBudgetAmount = existingBudget?.filter((bg: Budget) => {
+      setMates(td.title);
+    
+      const getBudgetAmount = currentBudget?.filter((bg: Budget) => {
         setBudget(bg.amount);
       });
     });
@@ -84,11 +67,11 @@ const DisplayPlanning = () => {
     const newAmount = {
       amount: budget,
     };
-    if (existingBudget == null) {
+    if (dbController.existingBudget == null) {
       localStorage.setItem("Trav_Budget", JSON.stringify([newAmount]));
     } else {
-      existingBudget.push(newAmount);
-      localStorage.setItem("Trav_Budget", JSON.stringify(existingBudget));
+      dbController.existingBudget.push(newAmount);
+      localStorage.setItem("Trav_Budget", JSON.stringify(dbController.existingBudget));
     }
   };
 
@@ -99,16 +82,20 @@ const DisplayPlanning = () => {
       amount: amount,
     };
 
-    if (existingExpense == null) {
+    if (dbController.existingExpense == null) {
       localStorage.setItem("Trav_Expense", JSON.stringify([newExpense]));
     } else {
-      existingExpense.push(newExpense);
-      localStorage.setItem("Trav_Expense", JSON.stringify(existingExpense));
+      dbController.existingExpense.push(newExpense);
+      localStorage.setItem("Trav_Expense", JSON.stringify(dbController.existingExpense));
+      router.refresh()
     }
   };
   return (
+
     <>
+    <Header/>
       <div className="h-screen pb-5 bg-stone-100">
+        <div className="flex gap-6">
         <div className="w-1/2 mx-auto mt-5 bg-blue-500 rounded-lg p-6 text-white">
           <p className=" text-4xl text-center underline mt-3">
             Trip to {cityName} - {countryName}
@@ -121,7 +108,9 @@ const DisplayPlanning = () => {
           <div className=" mt-4">
             <p>Partner with you:</p>
             <ul>
-              <li>{mates}</li>
+              {mates.map((e) =>{
+                return <li>{e.title}</li>
+                })}
             </ul>
           </div>
         </div>
@@ -156,9 +145,10 @@ const DisplayPlanning = () => {
                 setBudget={setBudget}
                 setAmount={updateBudget}
               />
-              <Button>View Summary</Button>
+              <ExpSummary data={expense}/>
             </div>
           </div>
+        </div>
         </div>
         <div className="rounded-lg h-56 w-11/12 mx-auto bg-blue-300 my-4">
           <h1 className="text-4xl underline italic font-mono text-center pt-3">

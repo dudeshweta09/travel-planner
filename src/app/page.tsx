@@ -1,8 +1,8 @@
 import HomeMain from "./home/page";
-import AddTrip from "@/components/addtrip";
+import AuthGuard from "@/components/auth-header";
 
 export default function Home() {
-  return <>
+  return <AuthGuard>
   <HomeMain/>
-  </>
+  </AuthGuard>
 }
