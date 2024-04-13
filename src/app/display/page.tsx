@@ -26,7 +26,7 @@ const DisplayPlanning = () => {
   const [mates, setMates] = useState<NameList[]>([]);
   const noOfDays = [...Array(days)];
   const [budget, setBudget] = useState("0");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("flight");
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState("");
