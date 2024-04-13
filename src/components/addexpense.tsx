@@ -12,8 +12,8 @@ import {
 const AddExpense = ({setCategory, title, setTitle, amount, setAmount, onAddExpense}:any) =>{
   return (
     <Popover>
-      <PopoverTrigger asChild className=" bg-red-500">
-        <Button variant="outline"><PlusIcon/>Add Expense</Button>
+      <PopoverTrigger asChild className=" bg-red-500 md:rounded-full">
+        <Button variant="outline" className="md:rounded-full"><PlusIcon/>Add Expense</Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">

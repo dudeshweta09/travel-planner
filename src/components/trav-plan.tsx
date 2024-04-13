@@ -83,7 +83,7 @@ const TravelPlan = () => {
         <div>
           <div className="w-1/2 mx-auto">
           <Label className="text-lg ml-16 font-bold font-mono">
-            Plan Holidays As per List By Selecting A Country... <br />
+            Plan your holidays as per the public holidayList...<br />
             <select
               required
               onChange={onCountryChange}

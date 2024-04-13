@@ -4,8 +4,6 @@ import { TripDetails } from "@/components/addtrip";
 import { CalendarClockIcon, IndianRupeeIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { differenceInCalendarDays } from "date-fns";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import EditBudget from "@/components/editbudget";
 import AddExpense from "@/components/addexpense";
 import Table from "@/components/tripitinerary";
@@ -15,6 +13,8 @@ import DbController from "../../../db-controller";
 import { useRouter } from "next/navigation";
 import { Expense, Budget } from "../../../schema";
 import ExpSummary from "@/components/exp-summary";
+import { dancingScript, oswald, playfairDisplay } from "../../../utils/fonts";
+
 
 const DisplayPlanning = () => {
   const dbController = new DbController();
@@ -95,17 +95,17 @@ const DisplayPlanning = () => {
     <>
     <Header/>
       <div className="h-screen pb-5 bg-stone-100">
-        <div className="flex gap-6">
-        <div className="w-1/2 mx-auto mt-5 bg-blue-500 rounded-lg p-6 text-white">
-          <p className=" text-4xl text-center underline mt-3">
+        <div className="flex gap-6 w-9/12 mx-auto">
+        <div className="w-1/2 mx-auto mt-5 bg-blue-900 rounded-lg p-6 text-white">
+          <p className=" text-4xl text-center underline mt-3 font:" style={dancingScript.style}>
             Trip to {cityName} - {countryName}
           </p>
-          <p className=" text-3xl text-center mt-3">Hotel - {hotelName}</p>
+          <p className=" text-3xl text-center mt-3" style={dancingScript.style}>Hotel - {hotelName}</p>
           <div className="flex">
             <CalendarClockIcon className=" size-8 text-white" />
-            <p className=" ml-3 mt-2">No. of Days {days}</p>
+            <p className=" ml-3 mt-2" style={playfairDisplay.style}>No. of Days {days}</p>
           </div>
-          <div className=" mt-4">
+          <div className=" mt-4" style={playfairDisplay.style}>
             <p>Partner with you:</p>
             <ul>
               {mates.map((e) =>{
@@ -114,7 +114,7 @@ const DisplayPlanning = () => {
             </ul>
           </div>
         </div>
-        <div className="w-1/2 mx-auto mt-5 bg-blue-500 rounded-lg p-6 text-white">
+        <div className="w-1/2 mx-auto mt-5 bg-blue-900 rounded-lg p-6 text-white">
           <div className="flex justify-between">
             <h4 className="xl:text-4xl font-serif">
               <b>Budgeting</b>
@@ -129,7 +129,7 @@ const DisplayPlanning = () => {
             />
           </div>
           <div className="mt-5 bg-slate-300 text-black rounded-md p-4">
-            <p className="text-md flex justify-between">
+            <p className="xl:text-md xl:flex justify-between w-11/12 mx-auto">
               <b className="flex">
                 budget: <IndianRupeeIcon />
                 {budget}
@@ -139,7 +139,7 @@ const DisplayPlanning = () => {
                 {balance}
               </b>
             </p>
-            <div className="flex gap-3 mt-8 ">
+            <div className="xl: flex gap-3 mt-8 ">
               <EditBudget
                 budget={budget}
                 setBudget={setBudget}
@@ -150,7 +150,7 @@ const DisplayPlanning = () => {
           </div>
         </div>
         </div>
-        <div className="rounded-lg h-56 w-11/12 mx-auto bg-blue-300 my-4">
+        <div className="rounded-lg h-fit w-6/12 mx-auto bg-blue-300 my-4">
           <h1 className="text-4xl underline italic font-mono text-center pt-3">
             Itinerary List
           </h1>

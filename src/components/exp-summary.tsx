@@ -8,16 +8,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "./ui/label";
 import DbController from "../../db-controller";
 import { Expense } from "../../schema";
 import { useEffect, useState } from "react";
-
+import { Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 
 const ExpSummary = ({data}: {data: Array<Expense>}) => {
     const dbController = new DbController();
+    const router = useRouter();
     const [total, setTotal] = useState("");
 
     useEffect(()=>{
@@ -33,15 +34,22 @@ const ExpSummary = ({data}: {data: Array<Expense>}) => {
       <DialogTrigger asChild>
         <Button variant="outline">View Summary</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] xl:max-w-[550px]">
         <DialogHeader>
           <DialogTitle className="text-center">Expenses Done</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-2 py-2">
             {data.map((e)=>(
-          <div className="grid grid-cols-2 items-center gap-4">
-            <Label className="pl-5 font-serif font-medium text-md">Category - {e.category}</Label>
-            <Label className="pl-5 font-serif font-medium text-md">Amount - {e.amount}</Label>
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="pl-3 font-serif font-medium text-md">Category - {e.category}</Label>
+            <Label className="pl-3 font-serif font-medium text-md">Amount - {e.amount}</Label>
+              <Trash2Icon onClick={
+                ()=>{
+                dbController.onDeleteExp(e.title,()=>{
+                  router.refresh();
+                })
+              }
+              }/>
           </div>
           ))}
         </div>

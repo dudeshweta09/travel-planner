@@ -48,6 +48,16 @@ export default class DbController {
     localStorage.setItem("Trav_LoggIN_Key",JSON.stringify(false))
   }
 
+  onDeleteExp = (title: string, callBack: ()=>void)=>{
+    let expData = JSON.parse(localStorage.getItem("Trav_Expense")!||"[]")
+    this.existingExpense = expData.filter((ep:Expense)=>{
+      return ep.title !== title
+    })
+    localStorage.setItem("Trav_Expense",JSON.stringify(this.existingExpense))
+    callBack();
+  }
+  
+
   getCurrentExistingBudget = ()=>{
     return this.existingBudget
   }

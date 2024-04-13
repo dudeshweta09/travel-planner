@@ -203,7 +203,7 @@ const Table = () => {
 
   return (
     
-    <table>
+    <table className="w-11/12">
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
