@@ -13,7 +13,8 @@ import DbController from "../../../db-controller";
 import { useRouter } from "next/navigation";
 import { Expense, Budget } from "../../../schema";
 import ExpSummary from "@/components/exp-summary";
-import { dancingScript, oswald, playfairDisplay } from "../../../utils/fonts";
+import { Progress } from "@/components/ui/progress";
+import { dancingScript, playfairDisplay } from "../../../utils/fonts";
 
 
 const DisplayPlanning = () => {
@@ -30,16 +31,22 @@ const DisplayPlanning = () => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState("");
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [percent, setPercent] = useState(0);
   const router = useRouter();
   const expense:Array<Expense> = dbController.getCurrentExistingExpense()
-  useEffect(() => {
+
+   useEffect(() => {
     const currentExpense = dbController.getCurrentExistingExpense();
     const totalExpense = currentExpense.reduce((prev: any, next: any) => {
       return prev + parseFloat(next.amount);
     }, 0);
     const totalIncome = parseFloat(budget);
     const balance = totalIncome - totalExpense;
+    const totalPercent = totalExpense*100/totalIncome;
       setBalance(balance.toString());
+      setTotalExpense(totalExpense);
+      setPercent(totalPercent);
   }, [setBalance, dbController.existingExpense, dbController.existingBudget, balance]);
 
   useEffect(() => {
@@ -139,6 +146,9 @@ const DisplayPlanning = () => {
                 {balance}
               </b>
             </p>
+            <div className="mt-3">
+              <Progress value={percent} max={parseFloat(budget)} className=" h-[5px] w-11/12 mx-auto" />
+            </div>
             <div className="xl: flex gap-3 mt-8 ">
               <EditBudget
                 budget={budget}
