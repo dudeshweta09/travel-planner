@@ -18,35 +18,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-
-
-const OPTIONS: EmblaOptionsType = {};
-const SLIDE_COUNT = 10;
-const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
+} from "@/components/ui/table";
+import DbController from "../../db-controller";
 
 const TravelPlan = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
   const [holidayList, setHolidayList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
   const values = Object.values(holidayList);
   const router = useRouter();
+  const dbController = new DbController();
+
+  const OPTIONS: EmblaOptionsType = {};
+  const SLIDE_COUNT = dbController.existingTripDetails.length;
+  const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
   useEffect(() => {
     setLoading(true);
-    try{
-    fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data: any) => {
-        setHolidayList(data);
-      });
-    } catch (err:any){
+    try {
+      fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data: any) => {
+          setHolidayList(data);
+        });
+    } catch (err: any) {
       setError(err);
-    } finally{
+    } finally {
       setLoading(false);
     }
   });
@@ -63,9 +64,9 @@ const TravelPlan = () => {
     setCountryName(e.target.value);
   };
 
-    return (
+  return (
     <div className=" h-screen">
-      <main className="bg-stone-100 h-screen">
+      <main className="bg-stone-100 h-fit">
         <EmblaCarousel slides={SLIDES} options={OPTIONS} />
         <div className=" w-9/12 mx-auto flex justify-end">
           {modalIsOpen && (
@@ -82,44 +83,46 @@ const TravelPlan = () => {
         </div>
         <div>
           <div className="w-1/2 mx-auto">
-          <Label className="text-lg ml-16 font-bold font-mono">
-            Plan your holidays as per the public holidayList...<br />
-            <select
-              required
-              onChange={onCountryChange}
-              className="max-w-44 xl:h-10 text-lg border rounded-md ml-16"
-            >
-              {countryList.map((name, index) => {
-                return (
-                  <option key={index} value={name.key}>
-                    {name.displayValue}
-                  </option>
-                );
-              })}
-            </select>
-          </Label>
+            <Label className="text-lg ml-16 font-bold font-mono">
+              Plan your holidays as per the public holidayList...
+              <br />
+              <select
+                required
+                onChange={onCountryChange}
+                className="max-w-44 xl:h-10 text-lg border rounded-md ml-16"
+              >
+                {countryList.map((name, index) => {
+                  return (
+                    <option key={index} value={name.key}>
+                      {name.displayValue}
+                    </option>
+                  );
+                })}
+              </select>
+            </Label>
           </div>
           <div className="w-1/2 mx-auto">
             <Table>
-  <TableCaption>Public Holidays List</TableCaption>
-  <TableHeader>
-    <TableRow>
-      <TableHead className="w-[100px]">Date</TableHead>
-      <TableHead>Name</TableHead>
-      <TableHead>Local Name</TableHead>
-      </TableRow>
-  </TableHeader>
-  <TableBody>
-    {values.length > 0 && values.map((m:any)=>
-    <TableRow>
-      <TableCell>{m.date}</TableCell>
-      <TableCell>{m.name}</TableCell>
-      <TableCell>{m.localName}</TableCell>
-      </TableRow>
-    )}
-  </TableBody>
-</Table>
-</div>
+              <TableCaption>Public Holidays List</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Date</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Local Name</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {values.length > 0 &&
+                  values.map((m: any) => (
+                    <TableRow>
+                      <TableCell>{m.date}</TableCell>
+                      <TableCell>{m.name}</TableCell>
+                      <TableCell>{m.localName}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </main>
     </div>

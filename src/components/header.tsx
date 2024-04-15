@@ -1,7 +1,9 @@
+"use client"
 import Link from 'next/link'
 import React from 'react'
 import { HomeIcon, MobileIcon, PlusIcon } from "@radix-ui/react-icons";
 import UserAvatar from "@/components/useravatar";
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
   return (

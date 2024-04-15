@@ -11,6 +11,7 @@ import TrpmateDisplay from "./trpmatedisplay";
 import { DateRange } from "react-day-picker";
 import { useRouter } from "next/navigation";
 import DbController from "../../db-controller";
+import { RenderTrips } from "../../schema";
 
 export interface CountryCounts {
   name: string;
@@ -30,8 +31,6 @@ export interface TripDetails {
   title: [];
 }
 
-// export const existTripDetails =
-//   JSON.parse(localStorage.getItem("Exist_TripDetails")!) || [];
 
 const AddTrip = () => {
   const dbController = new DbController();
@@ -44,7 +43,7 @@ const AddTrip = () => {
   const [date, setDate] = useState<DateRange | undefined>();
   const [name, setName] = useState("");
   const [mateNames, setMateNames] = useState<NameList[]>([]);
-
+  
   const countryList: Array<CountryCounts> = Country.getAllCountries().map(
     (cn) => ({
       name: cn.name,
@@ -91,6 +90,7 @@ const AddTrip = () => {
       alert("empty");
       return;
     }
+    
     const newTrip = {
       id: new Date().getTime().toString,
       countrieName: countryName,
@@ -104,6 +104,7 @@ const AddTrip = () => {
     if (dbController.existingTripDetails == null) {
       localStorage.setItem("Exist_TripDetails", JSON.stringify([newTrip]));
     } else {
+      
       dbController.existingTripDetails.push(newTrip);
       localStorage.setItem(
         "Exist_TripDetails",

@@ -98,7 +98,6 @@ const DisplayPlanning = () => {
     }
   };
   return (
-
     <>
     <Header/>
       <div className="h-screen pb-5 bg-stone-100">
@@ -147,7 +146,7 @@ const DisplayPlanning = () => {
               </b>
             </p>
             <div className="mt-3">
-              <Progress value={percent} max={parseFloat(budget)} className=" h-[5px] w-11/12 mx-auto" />
+              <Progress value={percent} max={parseFloat(budget)} className=" h-[5px] w-11/12 mx-auto transition-all duration-500" />
             </div>
             <div className="xl: flex gap-3 mt-8 ">
               <EditBudget
