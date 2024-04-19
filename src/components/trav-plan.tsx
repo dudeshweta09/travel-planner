@@ -20,13 +20,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DbController from "../../db-controller";
+import Map from "@/components/map";
 
 const TravelPlan = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
   const [holidayList, setHolidayList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const values = Object.values(holidayList);
   const router = useRouter();
   const dbController = new DbController();
@@ -36,20 +35,13 @@ const TravelPlan = () => {
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
   useEffect(() => {
-    setLoading(true);
-    try {
-      fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`)
-        .then((response) => {
+    fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`)
+      .then((response) => {
           return response.json();
-        })
-        .then((data: any) => {
+      })
+      .then((data: any) => {
           setHolidayList(data);
-        });
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
+      });
   });
 
   const countryList: Array<CountryCounts> = Country.getAllCountries().map(
@@ -65,7 +57,7 @@ const TravelPlan = () => {
   };
 
   return (
-    <div className=" h-screen">
+    <div className=" h-screen bg-stone-100">
       <main className="bg-stone-100 h-fit">
         <EmblaCarousel slides={SLIDES} options={OPTIONS} />
         <div className=" w-9/12 mx-auto flex justify-end">
@@ -125,6 +117,7 @@ const TravelPlan = () => {
           </div>
         </div>
       </main>
+      <Map />
     </div>
   );
 };

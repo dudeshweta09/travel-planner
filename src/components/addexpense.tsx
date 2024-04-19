@@ -41,7 +41,7 @@ const AddExpense = ({setCategory, title, setTitle, amount, setAmount, onAddExpen
                 value={title}
                 onChange={(e)=>{setTitle(e.target.value)}}
                 placeholder="write to remeber"
-                className="col-span-2 h-8"
+                className="col-span-1 w-1/2 ml-7 h-8"
               />
             </div>
             <div className="flex items-center gap-6">
@@ -52,7 +52,7 @@ const AddExpense = ({setCategory, title, setTitle, amount, setAmount, onAddExpen
                 value={amount}
                 onChange={(e)=>setAmount(e.target.value)}
                 placeholder="enter the amount"
-                className="col-span-2 h-8"
+                className="col-span-1 w-1/2 ml-1 h-8"
               />
             </div>
             <div className=" w-1/2 mx-auto">

@@ -7,15 +7,16 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-export type TripData = {
+ type TripData = {
   [x: string]: any;
+  id: number;
   date: string;
   place: string;
   time: string;
 };
 
-const defaultData: TripData[] = JSON.parse(localStorage.getItem("Itinerary_List")!) || []
-
+export const defaultData: TripData[] =
+  JSON.parse(localStorage.getItem("Itinerary_List")!) || [];
 
 const coulumnHelper = createColumnHelper<TripData>();
 
@@ -23,43 +24,22 @@ const TableCell = ({ getValue, row, column, table }: any) => {
   const initialValue = getValue();
   const columnMeta = column.columnDef.meta;
   const tableMeta = table.options.meta;
-  const [value, setValue] = useState("");
-  const [tableValue, setTableValue] = useState([])
-  
-  useEffect(() => {
-        const updateTable = () => {
-      const newTable: TripData = {
-        date: value,
-        place: value,
-        time: value,
-      };
-      if (defaultData == null) {
-        localStorage.setItem("Itinerary_List", JSON.stringify([newTable]));
-      } else {
-        defaultData.push(...tableValue, newTable)
-        localStorage.setItem(
-          "Itinerary_List",
-          JSON.stringify(defaultData)
-        );
-      }
-    };
-    updateTable();
-  }, [defaultData, value,initialValue]);
+  const [value, setValue] = useState(initialValue);
 
-  useEffect(() => {
+   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
-
   const onBlur = () => {
-    tableMeta.updateData(row.index, column.id, value);
+    tableMeta?.updateData(row.index, column.id, value);
   };
+
   return (
     <input
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onBlur}
-      type={column.columnDef.meta?.type || "text"}
-    />
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={onBlur}
+        type={columnMeta?.type || "text"}
+      />
   );
 };
 
@@ -78,8 +58,10 @@ const EditCell = ({ row, table }: any) => {
   };
 
   const removeRow = () => {
-    meta?.removeRow(row.index);
+    meta?.removeRow(row.place);
   };
+
+  
   return (
     <div>
       {meta?.editedRows[row.id] ? (
@@ -99,20 +81,21 @@ const EditCell = ({ row, table }: any) => {
           <button onClick={removeRow} name="remove">
             X
           </button>
+          
         </div>
       )}
     </div>
   );
 };
 
-const FooterCell = ({ table }: any) => {
-  const meta = table.options.meta;
-  return (
-    <div>
-      <button onClick={meta?.addRow}>Add New +</button>
-    </div>
-  );
-};
+// const FooterCell = ({ table }: any) => {
+//   const meta = table.options.meta;
+//   return (
+//     <div>
+//       <button onClick={meta?.addRow}>Add New +</button>
+//     </div>
+//   );
+// };
 
 const columns = [
   coulumnHelper.accessor("date", {
@@ -133,7 +116,7 @@ const columns = [
     header: "Time",
     cell: TableCell,
     meta: {
-      type: "text",
+      type: "time",
     },
   }),
   coulumnHelper.display({
@@ -146,9 +129,7 @@ const Table = () => {
   const [data, setData] = useState(() => [...defaultData]);
   const [originalData, setOriginalData] = useState(() => [...defaultData]);
   const [editedRows, setEditedRows] = useState({});
-
-  
-
+   
   const table = useReactTable({
     data,
     columns,
@@ -184,6 +165,7 @@ const Table = () => {
       },
       addRow: () => {
         const newRow: TripData = {
+          id:Math.floor(Math.random()*10000),
           date: "",
           place: "",
           time: "",
@@ -192,17 +174,18 @@ const Table = () => {
         setData(setFunc);
         setOriginalData(setFunc);
       },
-      removeRow: (rowIndex: number) => {
-        const setFilterFunc = (old: TripData[]) =>
-          old.filter((_row: TripData, index: number) => index !== rowIndex);
-        setData(setFilterFunc);
-        setOriginalData(setFilterFunc);
+      removeRow: (place:string) => {
+        let rowData = JSON.parse(localStorage.getItem("Itinerary_List")!||"[]")
+        // defaultData = rowData.filter((dt:TripData)=>{
+        //   return dt.place !== place
+        // })
+        localStorage.setItem("Itinerary_List",JSON.stringify(defaultData))
+        
       },
     },
   });
 
   return (
-    
     <table className="w-11/12">
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
@@ -231,13 +214,13 @@ const Table = () => {
           </tr>
         ))}
       </tbody>
-      <tfoot>
+      {/* <tfoot>
         <tr>
           <th colSpan={table.getCenterLeafColumns().length} align="right">
             <FooterCell table={table} />
           </th>
         </tr>
-      </tfoot>
+      </tfoot> */}
     </table>
   );
 };

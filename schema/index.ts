@@ -34,10 +34,17 @@ export const RegisterSchema = z.object({
 
 export type LoggedInType = z.infer<typeof LoginSchema>
 export type RegisterType = z.infer<typeof RegisterSchema>
+export type TripData = {
+  [x: string]: any;
+  id: number;
+  date: string;
+  place: string;
+  time: string;
+};
 export interface Budget {
   filter(arg0: (bg: Budget) => void): unknown;
-  push(newAmount: { amount: string }): unknown;
-  amount: string;
+  push(newAmount: { amount: number }): unknown;
+  amount: number;
 }
 
 export interface Expense {
@@ -45,11 +52,11 @@ export interface Expense {
   push(newExpense: {
     category: string;
     title: string;
-    amount: string;
+    amount: number;
   }): unknown;
   category: string;
   title: string;
-  amount: string;
+  amount: number;
 }
 
 export interface RenderTrips{
