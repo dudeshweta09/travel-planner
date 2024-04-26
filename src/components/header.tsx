@@ -6,6 +6,7 @@ import UserAvatar from "@/components/useravatar";
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
+  const router = useRouter();
   return (
     <header>
         <div className=" flex bg-stone-100">

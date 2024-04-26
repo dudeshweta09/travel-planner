@@ -7,6 +7,7 @@ import { RenderTrips } from "../../schema";
 import DbController from "../../db-controller";
 import { TripDetails } from "./addtrip";
 import Link from "next/link";
+import { title } from "process";
 
 type PropType = {
   slides: number[];

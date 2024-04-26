@@ -137,7 +137,12 @@ const DisplayPlanning = () => {
     <>
       <Header />
       <div className="h-full pb-5 bg-stone-100">
-        <div className="grid grid-cols-3 gap-4 pt-5 w-9/12 mx-auto">
+        <div
+        onClick={()=>{
+          router.push("/create")
+          router.refresh();
+        }}
+        className="grid grid-cols-3 gap-4 pt-5 w-9/12 mx-auto cursor-pointer">
           {dbController.existingTripDetails.map((td: TripDetails) => (
             <div className=" bg-blue-900 rounded-lg p-6 text-white">
               <CircleArrowOutUpLeftIcon

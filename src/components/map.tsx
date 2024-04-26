@@ -13,14 +13,16 @@ const Map: NextPage = () => {
     () => ({
       disableDefaultUI: true,
       clickableIcons: true,
-      scrollwheel: false,
+      scrollwheel: false, 
     }),
     []
   );
 
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
     libraries: libraries as any,
+    version:'weekly'
   });
 
   if (!isLoaded) {

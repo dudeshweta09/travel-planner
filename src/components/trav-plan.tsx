@@ -20,12 +20,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DbController from "../../db-controller";
-import Map from "@/components/map";
+import Map2 from "./reactmap";
+import SearchForm from "./searchbox";
+import "mapbox-gl/dist/mapbox-gl.css";
+
+interface ILocationProps{
+  places:"",
+  longitude: number,
+  latitude: number,
+}
 
 const TravelPlan = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
   const [holidayList, setHolidayList] = useState([]);
+  const [location, setLocation] = useState<ILocationProps>({
+        places:"",
+        longitude:0,
+        latitude:0,
+    })
   const values = Object.values(holidayList);
   const router = useRouter();
   const dbController = new DbController();
@@ -34,15 +47,27 @@ const TravelPlan = () => {
   const SLIDE_COUNT = dbController.existingTripDetails.length;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
+  const handleFormSubmit=(event:any)=>{
+    if(location.places){
+      console.log(location);
+    }
+  }
+  const updateCoordinates = (latitude,longitude) =>{
+    setLocation({...location, latitude, longitude})
+  }
   useEffect(() => {
-    fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`)
+    fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`,{
+      next:{
+        revalidate: 0
+      }
+    })
       .then((response) => {
           return response.json();
       })
       .then((data: any) => {
-          setHolidayList(data);
+        setHolidayList(data);
       });
-  });
+  },[countryName,holidayList]);
 
   const countryList: Array<CountryCounts> = Country.getAllCountries().map(
     (cn) => ({
@@ -57,7 +82,7 @@ const TravelPlan = () => {
   };
 
   return (
-    <div className=" h-screen bg-stone-100">
+    <div className=" h-full bg-stone-100">
       <main className="bg-stone-100 h-fit">
         <EmblaCarousel slides={SLIDES} options={OPTIONS} />
         <div className=" w-9/12 mx-auto flex justify-end">
@@ -112,12 +137,29 @@ const TravelPlan = () => {
                       <TableCell>{m.localName}</TableCell>
                     </TableRow>
                   ))}
+                  {values.length === 0 && (
+                    <TableRow>
+                      
+                    </TableRow>
+                  )}
               </TableBody>
             </Table>
           </div>
         </div>
       </main>
-      <Map />
+      <div className="flex pt-5 pb-5">
+      <div className="w-1/2">
+      
+      </div>
+      <div className="w-1/2">
+        <SearchForm
+        onSubmit={handleFormSubmit}
+        place={location}
+        setPlace={setLocation}
+        />
+      <Map2 longitude={location.longitude} latitude={location.latitude} updateCoordinates={updateCoordinates}/>
+      </div>
+      </div>
     </div>
   );
 };
