@@ -47,14 +47,14 @@ const TravelPlan = () => {
   const SLIDE_COUNT = dbController.existingTripDetails.length;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
-  const handleFormSubmit=(event:any)=>{
-    if(location.places){
-      console.log(location);
-    }
-  }
-  const updateCoordinates = (latitude,longitude) =>{
-    setLocation({...location, latitude, longitude})
-  }
+  // const handleFormSubmit=(event:any)=>{
+  //   if(location.places){
+  //     console.log(location);
+  //   }
+  // }
+  // const updateCoordinates = (latitude: any,longitude: any) =>{
+  //   setLocation({...location, latitude, longitude})
+  // }
   useEffect(() => {
     fetch(`https://date.nager.at/api/v3/publicholidays/2024/${countryName}`,{
       next:{
@@ -62,7 +62,11 @@ const TravelPlan = () => {
       }
     })
       .then((response) => {
+        if(response.status===200){
           return response.json();
+        }else{
+          return [];
+        }
       })
       .then((data: any) => {
         setHolidayList(data);
@@ -148,17 +152,7 @@ const TravelPlan = () => {
         </div>
       </main>
       <div className="flex pt-5 pb-5">
-      <div className="w-1/2">
-      
-      </div>
-      <div className="w-1/2">
-        <SearchForm
-        onSubmit={handleFormSubmit}
-        place={location}
-        setPlace={setLocation}
-        />
-      <Map2 longitude={location.longitude} latitude={location.latitude} updateCoordinates={updateCoordinates}/>
-      </div>
+        <Map2 />
       </div>
     </div>
   );
